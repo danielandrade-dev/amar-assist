@@ -20,6 +20,7 @@ class Product extends Model
         'stock',
         'cost',
         'status',
+        'slug',
     ];
 
     public function activeStorage()

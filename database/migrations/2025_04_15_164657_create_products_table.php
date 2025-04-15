@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('stock');
             $table->decimal('cost', 8, 2);
             $table->boolean('status');
+            $table->string('slug')->unique();
             $table->timestamps();
             $table->softDeletes();
         });
