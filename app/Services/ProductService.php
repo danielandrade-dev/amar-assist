@@ -14,9 +14,9 @@ class ProductService
     ) {
     }
 
-    public function all(): Collection
+    public function all(array $params): Collection
     {
-        return $this->productRepository->all();
+        return $this->productRepository->all($params);
     }
 
     public function create(array $data): ?Product

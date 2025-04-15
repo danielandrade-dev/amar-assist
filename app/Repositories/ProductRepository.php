@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 final class ProductRepository implements ProductRepositoryInterface
 {
-    public function all(): Collection
+    public function all(array $params): Collection
     {
-        return Product::all();
+        return Product::query()
+        ->with('activeStorage')
+        ->search($params)
+        ->paginate($params['per_page'], ['*'], 'page', $params['page']);
     }
 
     public function create(array $data): ?Product
@@ -31,12 +34,17 @@ final class ProductRepository implements ProductRepositoryInterface
 
     public function find(int $id): Product
     {
-        return Product::find($id);
+        return Product::query()
+        ->with('activeStorage')
+        ->find($id);
     }   
     
     public function findBySlug(string $slug): Product
     {
-        return Product::where('slug', $slug)->first();
+        return Product::query()
+        ->with('activeStorage')
+        ->where('slug', $slug)
+        ->first();
     }   
     
     

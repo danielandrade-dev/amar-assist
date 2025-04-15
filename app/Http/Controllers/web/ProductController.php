@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Http\Requests\ProductRequest;
 use App\Services\ProductService;
-
+use App\Http\Requests\ProductSearchRequest;
 final class ProductController extends Controller
 {
     public function __construct(
@@ -15,9 +15,9 @@ final class ProductController extends Controller
     ) {
     }
 
-    public function index()
+    public function index(ProductSearchRequest $request)
     {
-        $products = $this->productService->all();
+        $products = $this->productService->all($request->validated());
         return inertia('products/index', compact('products'));
     }
     public function create()

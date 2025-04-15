@@ -6,7 +6,7 @@ use App\Traits\HasProductLogs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Illuminate\Database\Eloquent\Builder;
 class Product extends Model
 {
     use HasFactory;
@@ -32,4 +32,17 @@ class Product extends Model
     {
         return $this->hasMany(ProductLog::class);
     }
+    public function scopeSearch(Builder $query, array $params): Builder
+    {
+        $query->when(isset($params['search']), function ($query) use ($params) {
+            $query->where('name', 'like', "%{$params['search']}%")
+                ->orWhere('description', 'like', "%{$params['search']}%");
+        })->when(isset($params['startDate']), function ($query) use ($params) {
+            $query->where('created_at', '>=', $params['startDate']);
+        })->when(isset($params['endDate']), function ($query) use ($params) {
+            $query->where('created_at', '<=', $params['endDate']);
+        });
+        return $query;
+    }
+
 }

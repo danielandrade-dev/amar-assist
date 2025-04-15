@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface ProductRepositoryInterface
 {
-    public function all(): Collection;
+    public function all(array $params): Collection;
 
     public function create(array $data): ?Product;
 
