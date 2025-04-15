@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('price', 8, 2);
             $table->integer('price_original');
-            $table->integer('quantity');
+            $table->integer('stock');
+            $table->decimal('cost', 8, 2);
             $table->boolean('status');
             $table->timestamps();
             $table->softDeletes();
