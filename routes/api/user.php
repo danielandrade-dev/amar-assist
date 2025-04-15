@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 
-Route::prefix('users')->middleware('auth:sanctum')->group(function () {
+Route::prefix('users')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/', function () {
         return new UserCollection(User::paginate());
     });

@@ -12,4 +12,4 @@ Route::prefix('/users')->name('users.')->controller(UserController::class)->grou
     Route::get('/{user:id|email}/edit', 'edit')->name('edit');
     Route::put('/{user:id|email}', 'update')->name('update');
     Route::delete('/{user:id|email}', 'destroy')->name('destroy');
-});
+})->middleware('throttle:60,1');

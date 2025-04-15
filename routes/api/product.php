@@ -9,7 +9,7 @@ use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 
 
-Route::prefix('products')->middleware('auth:sanctum')->group(function () {
+Route::prefix('products')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
     Route::get('/', function (Request $request) {
 
         $perPage = $request->input('per_page') ?? 15;
