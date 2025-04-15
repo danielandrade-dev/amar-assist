@@ -31,7 +31,7 @@ class UserService
 
     public function all(): Collection
     {
-        return $this->userRepository->all();
+        return $this->userRepository->all()->paginate(10);
     }
 
     public function find(int $id): ?User
