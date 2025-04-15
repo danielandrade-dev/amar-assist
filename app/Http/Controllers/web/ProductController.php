@@ -1,15 +1,23 @@
 <?php
 
+declare(strict_types=1);
 namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Http\Requests\ProductRequest;
-class ProductController extends Controller
+use App\Services\ProductService;
+
+final class ProductController extends Controller
 {
+    public function __construct(
+        protected ProductService $productService
+    ) {
+    }
+
     public function index()
     {
-        $products = Product::all()->with('activeStorage');
+        $products = $this->productService->all();
         return inertia('products/index', compact('products'));
     }
     public function create()
@@ -18,7 +26,10 @@ class ProductController extends Controller
     }
     public function store(ProductRequest $request)
     {
-        Product::create($request->all());
+        $product = $this->productService->create($request->all());
+        if (!$product instanceof Product) {
+            throw new \UnexpectedValueException('Failed to create product');
+        }
         return redirect()->route('products.index')->with('success', 'Produto criado com sucesso');
     }
     public function edit(Product $product)
@@ -27,12 +38,26 @@ class ProductController extends Controller
     }
     public function update(ProductRequest $request, Product $product)
     {
-        $product->update($request->all());
+        $this->productService->update($request->all(), $product);
+        if (!$product instanceof Product) {
+            throw new \UnexpectedValueException('Failed to update product');
+        }
         return redirect()->route('products.index')->with('success', 'Produto atualizado com sucesso');
     }
     public function destroy(Product $product)
     {
-        $product->delete();
+        $this->productService->delete($product);
+        if (!$product instanceof Product) {
+            throw new \UnexpectedValueException('Failed to delete product');
+        }
         return redirect()->route('products.index')->with('success', 'Produto deletado com sucesso');
+    }
+    public function show(Product $product)
+    {
+        $product = $this->productService->find($product->id);
+        if (!$product instanceof Product) {
+            throw new \UnexpectedValueException('Failed to show product');
+        }
+        return inertia('products/show', compact('product'));
     }
 }
