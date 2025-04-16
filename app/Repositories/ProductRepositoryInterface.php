@@ -11,7 +11,7 @@ interface ProductRepositoryInterface
 
     public function create(array $data): ?Product;
 
-    public function update(array $data, Product $product): Product;
+    public function update(array $data, Product $product): bool;
 
     public function delete(Product $product): void;
 

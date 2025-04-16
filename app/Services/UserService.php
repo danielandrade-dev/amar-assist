@@ -5,7 +5,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserService
 {
@@ -19,9 +19,9 @@ class UserService
         return $this->userRepository->create($data);
     }
 
-    public function update(array $data, int $id): int
+    public function update(array $data, User $user): bool
     {
-        return $this->userRepository->update($data, $id);
+        return $this->userRepository->update($data, $user);
     }
 
     public function delete(User $user): void
@@ -29,8 +29,8 @@ class UserService
         $this->userRepository->delete($user);
     }
 
-    public function all(): Collection
+    public function all(array $params): LengthAwarePaginator
     {
-        return $this->userRepository->all();
+        return $this->userRepository->all($params);
     }
 }

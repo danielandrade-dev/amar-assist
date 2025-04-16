@@ -4,13 +4,19 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 final class UserRepository implements UserRepositoryInterface
 {
-    public function all(): Collection
+    public function all(array $params): LengthAwarePaginator
     {
-        return User::all();
+        $params['per_page'] = $params['per_page'] ?? 10;
+        $params['page'] = $params['page'] ?? 1;
+        return User::query()
+        ->search($params)
+        ->latest()
+        ->paginate($params['per_page'], ['*'], 'page', $params['page'])
+        ->withQueryString();
     }
 
     public function create(array $data): ?User
@@ -18,7 +24,7 @@ final class UserRepository implements UserRepositoryInterface
         return User::create($data);
     }
 
-    public function update(array $data, User $user): User
+    public function update(array $data, User $user): bool
     {
         return $user->update($data);
     }

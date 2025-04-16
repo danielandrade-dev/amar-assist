@@ -19,14 +19,11 @@ const { success: showSuccess, error: showError } = useToast();
 const form = useForm({
     name: props.user.name,
     email: props.user.email,
-    password: '',
-    password_confirmation: ''
 });
 
 const submit = () => {
     form.put(route('users.update', props.user.id), {
         onSuccess: () => {
-            form.reset('password', 'password_confirmation');
             showSuccess('Usuário atualizado com sucesso!');
             router.visit(route('users.index'));
         },
@@ -74,31 +71,6 @@ const submit = () => {
                                 />
                                 <InputError class="mt-2" :message="form.errors.email" />
                             </div>
-
-                            <div>
-                                <InputLabel for="password" value="Nova Senha (opcional)" />
-                                <TextInput
-                                    id="password"
-                                    type="password"
-                                    class="mt-1 block w-full"
-                                    v-model="form.password"
-                                    autocomplete="new-password"
-                                />
-                                <InputError class="mt-2" :message="form.errors.password" />
-                            </div>
-
-                            <div>
-                                <InputLabel for="password_confirmation" value="Confirmar Nova Senha" />
-                                <TextInput
-                                    id="password_confirmation"
-                                    type="password"
-                                    class="mt-1 block w-full"
-                                    v-model="form.password_confirmation"
-                                    autocomplete="new-password"
-                                />
-                                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-                            </div>
-
                             <div class="flex items-center justify-end gap-4">
                                 <Link
                                     :href="route('users.index')"

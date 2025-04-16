@@ -12,9 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-
+use App\Http\Requests\UserSearchRequest;
 final class UserController extends Controller
 {
     public function __construct(
@@ -22,20 +20,10 @@ final class UserController extends Controller
     ) {
     }
 
-    public function index(): Response
+    public function index(UserSearchRequest $request): Response
     {
-        return Inertia::render('User/Index', [
-            'users' => User::query()
-                ->when(request('search'), function($query, $search) {
-                    $query->where(function($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
-                })
-                ->latest()
-                ->paginate(10)
-                ->withQueryString()
-        ]);
+        $users = $this->userService->all($request->validated());
+        return Inertia::render('User/Index', compact('users'));
     }
 
     public function create(): Response
@@ -73,39 +61,16 @@ final class UserController extends Controller
 
     public function update(ProfileUpdateRequest $request, User $user): RedirectResponse
     {
-        try {
-            $validatedData = $request->validated();
-            
-            $user->fill($validatedData);
-            
-            if ($user->isDirty('email')) {
-                $user->email_verified_at = null;
-            }
-            
-            if (isset($validatedData['password'])) {
-                $user->password = Hash::make($validatedData['password']);
-            }
-            
-            $user->save();
-            
-            return redirect()
-                ->route('users.index')
-                ->with('success', 'Usuário atualizado com sucesso');
-                
-        } catch (\Exception $e) {
-            return redirect()
-                ->back()
-                ->withErrors(['error' => 'Erro ao atualizar usuário']);
-        }
+        $this->userService->update($request->validated(), $user);
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Usuário atualizado com sucesso');
     }
 
     public function destroy(User $user): RedirectResponse
     {
-        $result = $this->userService->delete($user->id);
-
-        if (!is_bool($result)) {
-            throw new \UnexpectedValueException('Failed deleting user');
-        }
+        $this->userService->delete($user);
 
         return redirect()
             ->route('users.index')

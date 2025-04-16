@@ -24,7 +24,7 @@ class ProductService
         return $this->productRepository->create($data);
     }
     
-    public function update(array $data, Product $product): Product
+    public function update(array $data, Product $product): bool
     {
         return $this->productRepository->update($data, $product);
     }

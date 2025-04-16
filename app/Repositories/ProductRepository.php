@@ -23,7 +23,7 @@ final class ProductRepository implements ProductRepositoryInterface
         return Product::create($data);
     }   
 
-    public function update(array $data, Product $product): Product
+    public function update(array $data, Product $product): bool
     {
         return $product->update($data);
     }   
