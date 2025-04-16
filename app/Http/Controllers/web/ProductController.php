@@ -18,11 +18,11 @@ final class ProductController extends Controller
     public function index(ProductSearchRequest $request)
     {
         $products = $this->productService->all($request->validated());
-        return inertia('products/index', compact('products'));
+        return inertia('Product/Index', compact('products'));
     }
     public function create()
     {
-        return inertia('products/create');
+        return inertia('Product/Create');
     }
     public function store(ProductRequest $request)
     {
@@ -34,7 +34,7 @@ final class ProductController extends Controller
     }
     public function edit(Product $product)
     {
-        return inertia('products/edit', compact('product'));
+        return inertia('Product/Edit', compact('product'));
     }
     public function update(ProductRequest $request, Product $product)
     {
@@ -59,5 +59,10 @@ final class ProductController extends Controller
             throw new \UnexpectedValueException('Failed to show product');
         }
         return inertia('products/show', compact('product'));
+    }
+    public function changeStatus(Product $product)
+    {
+        $this->productService->changeStatus($product);
+        return redirect()->route('products.index')->with('success', 'Status do produto alterado com sucesso');
     }
 }

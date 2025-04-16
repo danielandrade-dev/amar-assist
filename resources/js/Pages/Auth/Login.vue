@@ -4,7 +4,6 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
@@ -66,14 +65,11 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="block mt-4">
+            <div class="block mt-4 flex items-center justify-between">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
                     <span class="ml-2 text-sm text-gray-600">Lembrar-me</span>
                 </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
@@ -81,10 +77,14 @@ const submit = () => {
                 >
                     Esqueceu sua senha?
                 </Link>
+            </div>
+
+            <div class="flex items-center justify-end mt-4">
+
                 <div class="flex items-center justify-between mt-4 gap-4 w-full">
-                    <SecondaryButton :href="route('register')" class="bg-primary text-white hover:bg-secondary">
+                    <Link :href="route('register')" class="text-primary hover:text-secondary">
                         Cadastrar
-                    </SecondaryButton>
+                    </Link>
                     <div class="ml-auto">
                         <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                             Entrar

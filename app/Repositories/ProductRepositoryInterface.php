@@ -3,11 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface ProductRepositoryInterface
 {
-    public function all(array $params): Collection;
+    public function all(array $params): LengthAwarePaginator;
 
     public function create(array $data): ?Product;
 
@@ -18,4 +18,6 @@ interface ProductRepositoryInterface
     public function find(int $id): Product;
 
     public function findBySlug(string $slug): Product;
+
+    public function changeStatus(Product $product): void;
 }

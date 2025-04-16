@@ -19,6 +19,7 @@ class ProductFactory extends Factory
             'cost' => $cost,
             'stock' => $this->faker->numberBetween(0, 100),
             'status' => $this->faker->boolean,
+            'slug' => $this->faker->slug,
         ];
     }
 } 

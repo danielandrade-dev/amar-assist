@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 final class ProductRepository implements ProductRepositoryInterface
 {
-    public function all(array $params): Collection
-    {
+    public function all(array $params): LengthAwarePaginator
+    {   
+        $params['per_page'] = $params['per_page'] ?? 10;
+        $params['page'] = $params['page'] ?? 1;
         return Product::query()
         ->with('activeStorage')
         ->search($params)
@@ -46,6 +48,11 @@ final class ProductRepository implements ProductRepositoryInterface
         ->where('slug', $slug)
         ->first();
     }   
+
+    public function changeStatus(Product $product): void
+    {
+        $product->update(['status' => !$product->status]);
+    }
     
     
 }

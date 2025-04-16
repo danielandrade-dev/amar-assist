@@ -27,6 +27,7 @@ class ProductSearchRequest extends FormRequest
             'search' => 'nullable|string',
             'startDate' => 'nullable|date',
             'endDate' => 'nullable|date',
+            'page' => 'nullable|integer',
         ];
     }
 

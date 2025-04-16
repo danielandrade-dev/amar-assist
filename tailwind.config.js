@@ -19,7 +19,7 @@ module.exports = {
                 secondary: '#F36606',
                 text: '#61CE70',
                 success: '#61CE70',
-                danger: '#F36606',
+                danger: '#FF0000',
                 warning: '#F36606',
                 info: '#17a2b8',
                 light: '#f8f9fa',

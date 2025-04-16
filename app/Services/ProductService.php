@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Repositories\ProductRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Product;
 
 class ProductService
@@ -14,7 +14,7 @@ class ProductService
     ) {
     }
 
-    public function all(array $params): Collection
+    public function all(array $params): LengthAwarePaginator
     {
         return $this->productRepository->all($params);
     }
@@ -44,4 +44,8 @@ class ProductService
         return $this->productRepository->findBySlug($slug);
     }
 
+    public function changeStatus(Product $product): void
+    {
+        $this->productRepository->changeStatus($product);
+    }
 }
