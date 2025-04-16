@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UserSearchRequest;
@@ -20,13 +20,13 @@ final class UserController extends Controller
     ) {
     }
 
-    public function index(UserSearchRequest $request): Response
+    public function index(UserSearchRequest $request): InertiaResponse
     {
         $users = $this->userService->all($request->validated());
         return Inertia::render('User/Index', compact('users'));
     }
 
-    public function create(): Response
+    public function create(): InertiaResponse
     {
         return Inertia::render('User/Create');
     }
@@ -50,7 +50,7 @@ final class UserController extends Controller
             ->with('success', 'Usuário criado com sucesso');
     }
 
-    public function edit(User $user): Response
+    public function edit(User $user): InertiaResponse
     {
         if (!$user instanceof User) {
             throw new ModelNotFoundException('User not found');
