@@ -15,13 +15,10 @@ class ActiveStorageResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'uuid' => $this->uuid,
-            'filename' => $this->filename,
-            'service_name' => $this->service_name,
-            'content_type' => $this->content_type,
-            'product_id' => $this->product_id,
-            'url' => $this->getUrl(),
+            'url' => $this->url,
+            'name' => $this->name,
+            'size' => $this->size,
+            'type' => $this->type,
             'created_at' => $this->created_at ? $this->created_at->format('d/m/Y H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('d/m/Y H:i:s') : null,
             'deleted_at' => $this->deleted_at ? $this->deleted_at->format('d/m/Y H:i:s') : null,

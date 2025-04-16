@@ -8,7 +8,6 @@ use App\Models\Product;
 use App\Http\Requests\ProductRequest;
 use App\Services\ProductService;
 use App\Http\Requests\ProductSearchRequest;
-use App\Http\Resources\ActiveStorageResource;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Illuminate\Http\RedirectResponse;
@@ -52,9 +51,10 @@ final class ProductController extends Controller
             throw new ModelNotFoundException('Product not found');
         }
         
-        $product->load('activeStorage');
-        $product->url = $product->activeStorage->getUrl();
-
+        $product->load('activeStorage'); 
+        if($product->activeStorage){
+            $product->url = $product->activeStorage->getUrl();
+        }
         return Inertia::render('Product/Edit', compact('product'));
     }
     public function update(ProductRequest $request, Product $product): RedirectResponse

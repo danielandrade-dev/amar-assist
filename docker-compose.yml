@@ -40,6 +40,7 @@ services:
             MYSQL_USER: ${DB_USERNAME:-username}
         volumes:
             - ./.docker/mysql/dbdata:/var/lib/mysql
+            - ./.docker/mysql/conf.d:/etc/mysql/conf.d
         ports:
             - "3388:3306"
         networks:
@@ -61,6 +62,24 @@ services:
     # redis
     redis:
         image: redis:latest
+        command: redis-server --appendonly yes
+        volumes:
+            - ./.docker/redis:/data
+        networks:
+            - laravel
+
+    # minio
+    minio:
+        image: minio/minio
+        ports:
+            - "9000:9000"
+            - "9001:9001"
+        environment:
+            MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+            MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+        volumes:
+            - ./.docker/minio/data:/data
+        command: server /data --console-address ":9001"
         networks:
             - laravel
 

@@ -22,15 +22,32 @@ const form = useForm({
     price: props.product.price || '',
     cost: props.product.cost || '',
     image: props.product.url || null,
+    _method: 'PUT'
 });
-
 
 const isSubmitting = ref(false);
 const { success: showSuccess } = useToast();
 
 function updateProduct() {
     isSubmitting.value = true;
-    form.put(route('products.update', props.product.slug), {
+
+    // Criar um FormData para enviar os dados
+    const formData = new FormData();
+    
+    // Adicionar os campos do formulário
+    formData.append('name', form.name);
+    formData.append('description', form.description);
+    formData.append('price', form.price);
+    formData.append('cost', form.cost);
+    formData.append('_method', 'PUT');
+
+    // Adicionar a imagem apenas se for um arquivo (File object)
+    if (form.image instanceof File) {
+        formData.append('image', form.image);
+    }
+
+    // Enviar o formulário usando o método post com FormData
+    form.post(route('products.update', props.product.slug), {
         preserveScroll: true,
         onFinish: () => isSubmitting.value = false,
         onSuccess: () => {
@@ -62,7 +79,7 @@ function validateCurrency(value) {
             <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border border-light">
                     <div class="p-8 text-dark flex flex-col gap-8">
-                        <form @submit.prevent="updateProduct" class="space-y-8">
+                        <form @submit.prevent="updateProduct" class="space-y-8" enctype="multipart/form-data">
                             <div class="form-group flex flex-col gap-2">
                                 <InputLabel for="name">Nome</InputLabel>
                                 <TextInput id="name" v-model="form.name" class="form-control" placeholder="Digite o nome do produto" aria-label="Nome do produto" :class="{'border-danger': form.errors.name}" autofocus />
