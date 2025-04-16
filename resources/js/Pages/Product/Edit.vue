@@ -21,8 +21,9 @@ const form = useForm({
     description: props.product.description || '',
     price: props.product.price || '',
     cost: props.product.cost || '',
-    image: [], // imagens novas, se quiser manter as antigas, pode exibir miniaturas
+    image: props.product.url || null,
 });
+
 
 const isSubmitting = ref(false);
 const { success: showSuccess } = useToast();
@@ -30,6 +31,7 @@ const { success: showSuccess } = useToast();
 function updateProduct() {
     isSubmitting.value = true;
     form.put(route('products.update', props.product.slug), {
+        preserveScroll: true,
         onFinish: () => isSubmitting.value = false,
         onSuccess: () => {
             showSuccess('Produto atualizado com sucesso!');
@@ -96,9 +98,14 @@ function validateCurrency(value) {
                             </div>
                             <div class="form-group flex flex-col gap-2">
                                 <InputLabel for="image">Imagem</InputLabel>
-                                <InputFile id="image" :multiple="true" v-model="form.image" class="form-control file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark" aria-label="Imagem do produto" />
-                                <span class="text-xs text-gray-500 mt-1">Apenas JPG e PNG. Selecione uma ou mais imagens.</span>
-                                <span v-if="form.errors.image" class="text-danger text-xs mt-1">{{ form.errors.image }}</span>
+                                <InputFile 
+                                    id="image" 
+                                    v-model="form.image" 
+                                    :errors="form.errors"
+                                    class="form-control" 
+                                    aria-label="Imagem do produto" 
+                                />
+                                <span class="text-xs text-gray-500 mt-1">Apenas JPG e PNG. Tamanho máximo: 2MB.</span>
                             </div>
                             <div class="form-group mt-6">
                                 <button type="submit" class="bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg w-full flex items-center justify-center text-base font-semibold shadow-md transition disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" :disabled="isSubmitting">

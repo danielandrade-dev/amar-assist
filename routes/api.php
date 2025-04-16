@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use App\Http\Controllers\Auth\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,8 +15,12 @@ use Illuminate\Support\Facades\File;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/login', [AuthController::class, 'login'])->name('api.v1.auth.login');
+
+Route::middleware('auth:sanctum')->group(function (): void {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', fn(Request $request) => $request->user());
+
 });
 
 Route::prefix('v1')->middleware('auth:sanctum')->group(function () {

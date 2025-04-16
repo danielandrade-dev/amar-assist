@@ -15,6 +15,7 @@ final class ProductRepository implements ProductRepositoryInterface
         return Product::query()
         ->with('activeStorage')
         ->search($params)
+        ->orderBy('created_at', 'desc')
         ->paginate($params['per_page'], ['*'], 'page', $params['page']);
     }
 

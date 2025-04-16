@@ -7,49 +7,46 @@
             @drop.prevent="onDrop"
             :class="{ 'dropzone-active': dragActive }"
             tabindex="0"
-            aria-label="Área para arrastar e soltar imagens"
+            aria-label="Área para arrastar e soltar imagem"
             @click="triggerFileInput"
         >
             <input
                 :id="id"
                 type="file"
-                :multiple="multiple"
                 accept="image/jpeg, image/png"
                 @change="onFileChange"
                 class="hidden"
                 :aria-label="ariaLabel"
                 ref="fileInput"
             />
-            <div class="dropzone-content">
+            <div v-if="!modelValue" class="dropzone-content">
                 <span class="text-gray-500 text-sm">
-                    Arraste e solte imagens aqui ou <span class="underline cursor-pointer text-primary">clique para selecionar</span>
+                    Arraste e solte uma imagem aqui ou <span class="underline cursor-pointer text-primary">clique para selecionar</span>
                 </span>
-                <span class="text-xs text-gray-400 block mt-1">Apenas JPG e PNG. Tamanho máximo: 5MB por imagem.</span>
+                <span class="text-xs text-gray-400 block mt-1">Apenas JPG e PNG. Tamanho máximo: 2MB.</span>
             </div>
-        </div>
-        <div v-if="modelValue && modelValue.length" class="image-grid mt-2">
-            <div v-for="(img, idx) in modelValue" :key="imgKey(img, idx)" class="image-thumb group">
+            <div v-else class="image-preview">
                 <img
-                    :src="imgUrl(img)"
-                    class="thumb-img"
-                    :alt="`Miniatura ${idx+1}`"
+                    :src="imgUrl(modelValue)"
+                    class="preview-img"
+                    :alt="imgName(modelValue)"
                 />
                 <button
                     type="button"
                     class="remove-btn"
-                    @click="removeImage(idx)"
-                    :aria-label="`Remover imagem ${imgName(img)}`"
+                    @click.stop="removeImage"
+                    aria-label="Remover imagem"
                 >
                     ✕
                 </button>
                 <div class="file-info">
-                    <span class="file-name">{{ imgName(img) }}</span>
-                    <span class="file-size">{{ imgSize(img) }}</span>
+                    <span class="file-name">{{ imgName(modelValue) }}</span>
+                    <span class="file-size">{{ imgSize(modelValue) }}</span>
                 </div>
             </div>
         </div>
         <span v-if="errorMsg" class="text-red-500 text-sm mt-1">{{ errorMsg }}</span>
-        <span v-if="errors.file" class="text-red-500 text-sm">{{ errors.file }}</span>
+        <span v-if="errors.image" class="text-red-500 text-sm">{{ errors.image }}</span>
     </div>
 </template>
 
@@ -61,8 +58,7 @@ const props = defineProps({
     label: { type: String, default: 'Arquivo' },
     ariaLabel: { type: String, default: 'Selecione um arquivo' },
     errors: { type: Object, default: () => ({}) },
-    modelValue: { type: Array, default: () => [] },
-    multiple: { type: Boolean, default: false },
+    modelValue: { type: [File, String, null], default: null },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -74,12 +70,6 @@ function imgUrl(img) {
     if (typeof img === 'string') return img;
     if (img instanceof File) return URL.createObjectURL(img);
     return '';
-}
-
-function imgKey(img, idx) {
-    if (typeof img === 'string') return img + idx;
-    if (img instanceof File) return img.name + img.size + idx;
-    return idx;
 }
 
 function imgName(img) {
@@ -104,40 +94,32 @@ function triggerFileInput(e) {
 
 function onFileChange(e) {
     errorMsg.value = '';
-    const files = Array.from(e.target.files);
-    handleFiles(files);
+    const file = e.target.files[0];
+    if (file) handleFile(file);
     e.target.value = '';
 }
 
 function onDrop(e) {
     dragActive.value = false;
     errorMsg.value = '';
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
 }
 
-function handleFiles(files) {
-    const valid = [];
-    for (const file of files) {
-        if (!['image/jpeg', 'image/png'].includes(file.type)) {
-            errorMsg.value = 'Apenas arquivos JPG e PNG são permitidos.';
-            continue;
-        }
-        if (file.size > 5 * 1024 * 1024) {
-            errorMsg.value = 'O tamanho máximo por imagem é 5MB.';
-            continue;
-        }
-        valid.push(file);
+function handleFile(file) {
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        errorMsg.value = 'Apenas arquivos JPG e PNG são permitidos.';
+        return;
     }
-    if (valid.length) {
-        emit('update:modelValue', props.multiple ? [...props.modelValue, ...valid] : [valid[0]]);
+    if (file.size > 2 * 1024 * 1024) {
+        errorMsg.value = 'O tamanho máximo da imagem é 2MB.';
+        return;
     }
+    emit('update:modelValue', file);
 }
 
-function removeImage(idx) {
-    const newValue = [...props.modelValue];
-    newValue.splice(idx, 1);
-    emit('update:modelValue', newValue);
+function removeImage() {
+    emit('update:modelValue', null);
 }
 </script>
 
@@ -151,40 +133,36 @@ function removeImage(idx) {
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     outline: none;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 .dropzone:focus, .dropzone-active {
     border-color: #1e40af;
     background: #e0e7ff;
 }
+
 .dropzone-content {
     pointer-events: none;
 }
-.image-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1rem;
-}
-.image-thumb {
+
+.image-preview {
     position: relative;
-    border: 2px solid #e5e7eb;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 1px 4px #0001;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    padding-bottom: 0.5rem;
-}
-.image-thumb:hover, .image-thumb:focus-within {
-    border-color: #2563eb;
-    box-shadow: 0 2px 8px #2563eb22;
-}
-.thumb-img {
     width: 100%;
-    height: 100px;
-    object-fit: cover;
-    display: block;
-    border-bottom: 1px solid #f3f4f6;
+    max-width: 300px;
+    margin: 0 auto;
 }
+
+.preview-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
+}
+
 .remove-btn {
     position: absolute;
     top: 6px;
@@ -204,35 +182,28 @@ function removeImage(idx) {
     transition: background 0.2s, opacity 0.2s;
     z-index: 2;
 }
+
 .remove-btn:hover, .remove-btn:focus {
     background: #b91c1c;
     opacity: 1;
     outline: 2px solid #2563eb;
 }
+
 .file-info {
-    padding: 0.25rem 0.5rem 0 0.5rem;
+    margin-top: 0.5rem;
+    text-align: left;
     font-size: 0.85rem;
     color: #374151;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
 }
+
 .file-name {
     font-weight: 500;
     word-break: break-all;
 }
+
 .file-size {
     color: #6b7280;
     font-size: 0.8em;
-}
-@media (max-width: 600px) {
-    .image-grid {
-        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-        gap: 0.5rem;
-    }
-    .thumb-img {
-        height: 70px;
-    }
+    margin-left: 0.5rem;
 }
 </style>

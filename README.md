@@ -1,47 +1,209 @@
-### Descrição do Teste
+# AMAR Assist - Sistema de Gerenciamento de Produtos
 
-Nesse teste, deve ser criado um sistema de cadastro de produtos. 
+## 📋 Sobre o Projeto
 
-Será necessária uma página de Login, no qual pode ser cadastrado apenas um usuário padrão.
+AMAR Assist é um sistema de gerenciamento de produtos desenvolvido com Laravel e Vue.js. O sistema oferece funcionalidades de cadastro, edição e gerenciamento de produtos com uma interface moderna e intuitiva.
 
-Ao efetuar o login, o usuário verá uma lista de produtos e terá três opções: Editar, Cadastrar e Inativar produtos.
+## 🚀 Funcionalidades
 
-O produto precisa ter os seguintes campos:
+- Sistema de autenticação de usuários
+- Gerenciamento completo de produtos:
+  - Cadastro de produtos com múltiplas imagens
+  - Edição de informações
+  - Inativação de produtos
+  - Validação automática de preços e custos
+  - Editor de descrição com suporte a HTML básico
+- Upload de imagens (suporte para JPG e PNG)
+- Interface responsiva e moderna
 
-* Título
-* Imagens (poderá ser carregado várias imagens)
-* Preço de venda
-* Custo
-* Descrição do produto
+## 🛠️ Tecnologias Utilizadas
 
-Serão necessárias algumas validações, sendo elas:
+- **Backend:**
+  - PHP 8
+  - Laravel 9
+  - MySQL 8
 
-* O preço do produto não pode ser inferior ao custo do produto + 10%
-* A descrição será um campo aberto para HTML, porém só será aceito as tags: `<p>`, `<br>`, `<b>` e `<strong>`
-* Só serão permitidas imagens jpg e png
+- **Frontend:**
+  - Vue.js
+  - HTML5/CSS3
+  - JavaScript
 
-### Arquitetura
+- **Infraestrutura:**
+  - Docker
+  - Docker Compose
 
-O sistema deverá utilizar os seguintes recursos, respeitando as versões:
+## ⚙️ Requisitos do Sistema
 
-* PHP: versão 8
-* MYSQL: versão 8
-* Laravel: versão 9
+- Docker e Docker Compose instalados
+- Git
 
-O front-end deverá ser feito em Vue.
+## 🔧 Instalação
 
-Ele deverá rodar em um docker.
+1. Clone o repositório:
+```bash
+git clone [https://github.com/danielandrade-dev/amar-assist]
+cd amar-assist
+```
 
-### Entrega
+2. Configure o ambiente:
+```bash
+cp .env.example .env
+```
 
-O sistema deverá ser entregue em um repositório no git.
+3. Inicie os containers Docker:
+```bash
+docker-compose up -d
+```
 
-Importante: Não utilizar o Laravel Sail.
+4. Instale as dependências e configure o projeto:
+```bash
+docker-compose exec app composer install
+docker-compose exec app php artisan key:generate
+docker-compose exec app php artisan migrate
+docker-compose exec app php artisan storage:link
+```
 
-### Diferenciais
+5. Instale as dependências do frontend:
+```bash
+docker-compose exec app npm install
+docker-compose exec app npm run dev
+```
 
-* Log de criação/modificação de produtos
-* CRUD de usuários
-* Boas práticas de Segurança
-* Documentação (arquitetura, manual de instalação e manual de usuário)
-* Testes unitários
+## 🔒 Validações do Sistema
+
+### Produtos
+- Preço de venda deve ser superior ao custo + 10%
+- Descrição aceita apenas as tags HTML: `<p>`, `<br>`, `<b>` e `<strong>`
+- Suporte apenas para imagens nos formatos JPG e PNG
+
+## 👥 Autores
+
+- Daniel Andrade (danielthooth@gmail.com)
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT.
+
+Copyright (c) 2024 Daniel Tooth
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## 📞 Suporte
+
+Para suporte, envie um email para danielthooth@gmail.com
+
+## 📘 Guia de Uso
+
+### Interface Web
+
+1. **Login no Sistema**
+   - Acesse `http://localhost:8000`
+   - Use suas credenciais para entrar no sistema
+
+2. **Gerenciamento de Produtos**
+   - Na página principal, você verá a lista de produtos
+   - Use o botão "Novo Produto" para adicionar um produto
+   - Para cada produto na lista, você pode:
+     - Clicar em "Editar" para modificar as informações
+     - Usar "Inativar" para desativar temporariamente o produto
+
+3. **Cadastro de Produtos**
+   - Preencha todos os campos obrigatórios (Título, Preço, Custo)
+   - Faça upload de uma ou mais imagens (JPG ou PNG)
+   - Use o editor HTML para formatar a descrição (tags permitidas: `<p>`, `<br>`, `<b>`, `<strong>`)
+   - O sistema validará automaticamente se o preço está pelo menos 10% acima do custo
+
+## 🔌 API Documentation
+
+### Autenticação com Sanctum
+
+1. **Obter Token de Acesso**
+```bash
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "seu-email@exemplo.com", "password": "sua-senha"}'
+```
+
+2. **Usar o Token nas Requisições**
+```bash
+curl -X GET http://localhost:8000/api/v1/products \
+  -H "Authorization: Bearer {seu-token}"
+```
+
+### Endpoints Disponíveis
+
+#### Produtos
+
+- **Listar Produtos**
+  ```
+  GET /api/products
+  ```
+
+- **Obter Produto Específico**
+  ```
+  GET /api/products/{id}
+  ```
+
+- **Criar Produto**
+  ```
+  POST /api/products
+  Content-Type: multipart/form-data
+  
+  {
+    "title": "Nome do Produto",
+    "price": 100.00,
+    "cost": 80.00,
+    "description": "<p>Descrição do produto</p>",
+    "images[]": [arquivo1, arquivo2]
+  }
+  ```
+
+- **Atualizar Produto**
+  ```
+  PUT /api/products/{id}
+  ```
+
+- **Inativar Produto**
+  ```
+  DELETE /api/products/{id}
+  ```
+
+### Documentação Completa da API
+
+A documentação completa da API está disponível em:
+```
+http://localhost:8000/api/documentation
+```
+
+Para acessar a documentação:
+1. Certifique-se de que o servidor está rodando
+2. Acesse a URL da documentação
+3. Use o botão "Authorize" para autenticar com seu token
+4. Explore todos os endpoints disponíveis com exemplos de requisição e resposta
+
+### Códigos de Status
+
+- `200`: Sucesso
+- `201`: Criado com sucesso
+- `400`: Erro de validação
+- `401`: Não autorizado
+- `403`: Acesso proibido
+- `404`: Não encontrado
+- `422`: Erro de validação de dados
+- `500`: Erro interno do servidor

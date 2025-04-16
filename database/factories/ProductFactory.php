@@ -17,7 +17,6 @@ class ProductFactory extends Factory
             'description' => '<p>' . $this->faker->paragraph . '</p>',
             'price' => $cost * 1.2, // Garante que o preço é sempre 20% maior que o custo
             'cost' => $cost,
-            'stock' => $this->faker->numberBetween(0, 100),
             'status' => $this->faker->boolean,
             'slug' => $this->faker->slug,
         ];

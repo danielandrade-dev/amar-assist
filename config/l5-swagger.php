@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Documentação da API - gerenciamento de produtos',
             ],
 
             'routes' => [
@@ -118,6 +118,14 @@ return [
              * ],
              * ],.
              */
+                'operationId.hash' => true,
+                'pathFilter' => [
+                    'tags' => [
+                        '/Auth/',
+                        '/Products/',
+                        '/Users/',
+                    ],
+                ],
             ],
 
             /**
@@ -215,6 +223,7 @@ return [
                     'in' => 'header', // The location of the API key. Valid values are "query" or "header".
                 ],
                 */
+                
             ],
             'security' => [
                 /*
@@ -261,7 +270,7 @@ return [
          * 'method' (sort by HTTP method).
          * Default is the order returned by the server unchanged.
          */
-        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', null),
+        'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', 'null'),
 
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.

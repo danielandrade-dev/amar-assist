@@ -19,7 +19,6 @@ class Product extends Model
         'name',
         'description',
         'price',
-        'stock',
         'cost',
         'status',
         'slug',
@@ -30,10 +29,33 @@ class Product extends Model
         return $this->hasOne(ActiveStorage::class);
     }
 
+    public function uploadImage($file)
+    {
+        if ($this->activeStorage) {
+            $this->activeStorage->updateImage($file);
+            return $this->activeStorage;
+        }
+
+        return ActiveStorage::uploadImage($file, $this);
+    }
+
+    public function removeImage()
+    {
+        if ($this->activeStorage) {
+            $this->activeStorage->delete();
+        }
+    }
+
+    public function getImageUrl()
+    {
+        return $this->activeStorage?->getUrl();
+    }
+
     public function logs()
     {
         return $this->hasMany(ProductLog::class);
     }
+
     public function scopeSearch(Builder $query, array $params): Builder
     {
         $query->when(isset($params['search']), function ($query) use ($params) {
@@ -46,12 +68,17 @@ class Product extends Model
         });
         return $query;
     }
+
     protected static function boot()
     {
         parent::boot();
         static::creating(function ($product) {
             $product->slug = Str::random(10);
+            $product->status = true;
+        });
+
+        static::deleting(function ($product) {
+            $product->removeImage();
         });
     }
-
 }

@@ -44,7 +44,6 @@ class ProductControllerTest extends TestCase
             'description' => '<p>' . $this->faker->paragraph . '</p>',
             'price' => 100,
             'cost' => 80, // Garante que o preço é 20% maior que o custo
-            'stock' => 10,
             'status' => true
         ];
 
@@ -55,7 +54,6 @@ class ProductControllerTest extends TestCase
         $response->assertRedirect(route('products.index'));
         $this->assertDatabaseHas('products', [
             'name' => $productData['name'],
-            'stock' => $productData['stock']
         ]);
         $response->assertSessionHas('success', 'Produto criado com sucesso');
     }
@@ -68,7 +66,6 @@ class ProductControllerTest extends TestCase
             'description' => '<p>' . $this->faker->paragraph . '</p>',
             'price' => 85, // Preço menor que custo + 10%
             'cost' => 80,
-            'stock' => 10,
             'status' => true
         ];
 
@@ -104,7 +101,6 @@ class ProductControllerTest extends TestCase
             'description' => '<p>Nova descrição</p>',
             'price' => 120,
             'cost' => 100,
-            'stock' => 15,
             'status' => true
         ];
 
@@ -140,7 +136,7 @@ class ProductControllerTest extends TestCase
         $response = $this->post(route('products.store'), []);
 
         // Assert
-        $response->assertSessionHasErrors(['name', 'description', 'price', 'cost', 'stock', 'status']);
+        $response->assertSessionHasErrors(['name', 'description', 'price', 'cost', 'status']);
     }
 
     public function test_store_validates_html_tags_in_description()
@@ -151,7 +147,6 @@ class ProductControllerTest extends TestCase
             'description' => '<script>alert("teste")</script>', // Tag não permitida
             'price' => 100,
             'cost' => 80,
-            'stock' => 10,
             'status' => true
         ];
 

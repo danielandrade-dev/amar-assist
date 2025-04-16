@@ -3,8 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\ActiveStorageResource;
-class ProductResource extends JsonResource
+
+class ActiveStorageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,16 +16,12 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'price' => $this->price,
-            'cost' => $this->cost,
-            'status' => $this->status,
-            'slug' => $this->slug,
-            'active_storage' => $this->whenLoaded('activeStorage', function () {
-                return new ActiveStorageResource($this->activeStorage);
-            }),
-            'logs' => $this->whenLoaded('logs'),
+            'uuid' => $this->uuid,
+            'filename' => $this->filename,
+            'service_name' => $this->service_name,
+            'content_type' => $this->content_type,
+            'product_id' => $this->product_id,
+            'url' => $this->getUrl(),
             'created_at' => $this->created_at ? $this->created_at->format('d/m/Y H:i:s') : null,
             'updated_at' => $this->updated_at ? $this->updated_at->format('d/m/Y H:i:s') : null,
             'deleted_at' => $this->deleted_at ? $this->deleted_at->format('d/m/Y H:i:s') : null,
