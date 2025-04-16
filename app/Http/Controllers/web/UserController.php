@@ -31,16 +31,10 @@ final class UserController extends Controller
         return Inertia::render('User/Create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ProfileUpdateRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|unique:users,email',
-            'password' => 'required|confirmed'
-        ]);
-
-        $user = $this->userService->create($data);
-
+        $user = $this->userService->create($request->validated());
+        
         if (!$user instanceof User) {
             throw new \UnexpectedValueException('Failed to create user');
         }

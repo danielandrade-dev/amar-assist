@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Hash;
 
 final class UserRepository implements UserRepositoryInterface
 {
@@ -20,7 +21,13 @@ final class UserRepository implements UserRepositoryInterface
     }
 
     public function create(array $data): ?User
-    {
+    {   
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            throw new \InvalidArgumentException('A senha é obrigatória para criar um usuário.');
+        }
+        
         return User::create($data);
     }
 
