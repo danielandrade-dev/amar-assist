@@ -22,6 +22,7 @@ AMAR Assist é um sistema de gerenciamento de produtos desenvolvido com Laravel 
   - PHP 8
   - Laravel 9
   - MySQL 8
+  - MinIO (Armazenamento de objetos S3-compatible)
 
 - **Frontend:**
   - Vue.js
@@ -36,6 +37,7 @@ AMAR Assist é um sistema de gerenciamento de produtos desenvolvido com Laravel 
 
 - Docker e Docker Compose instalados
 - Git
+- MinIO Server (incluído no Docker Compose)
 
 ## 🔧 Instalação
 
@@ -50,12 +52,24 @@ cd amar-assist
 cp .env.example .env
 ```
 
-3. Inicie os containers Docker:
+3. Configure as variáveis do MinIO no arquivo .env:
+```env
+FILESYSTEM_DRIVER=s3
+AWS_ACCESS_KEY_ID=0CYmbypeoj0iTtBkalpV
+AWS_SECRET_ACCESS_KEY=ajEBWxSSL1nF6Vo3C9mWL2gM27lv7oVzs79ajnsW
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=local
+AWS_ENDPOINT=http://minio:9000
+AWS_URL=http://localhost:9000/local
+AWS_USE_PATH_STYLE_ENDPOINT=true
+```
+
+4. Inicie os containers Docker:
 ```bash
 docker-compose up -d
 ```
 
-4. Instale as dependências e configure o projeto:
+5. Instale as dependências e configure o projeto:
 ```bash
 docker-compose exec app composer install
 docker-compose exec app php artisan key:generate
@@ -63,7 +77,36 @@ docker-compose exec app php artisan migrate
 docker-compose exec app php artisan storage:link
 ```
 
-5. Instale as dependências do frontend:
+6. Configure o bucket do MinIO:
+```bash
+# Acesse o console do MinIO em http://localhost:9001
+# Credenciais padrão de acesso ao console: minioadmin / minioadmin
+
+# Criando Access Key e Secret Key:
+# 1. No console do MinIO, clique em "Access Keys" no menu lateral
+# 2. Clique em "Create access key"
+# 3. Guarde as credenciais geradas e atualize no seu .env:
+#    AWS_ACCESS_KEY_ID=sua_access_key_gerada
+#    AWS_SECRET_ACCESS_KEY=sua_secret_key_gerada
+
+# Criando o Bucket:
+# 1. No console, vá para "Buckets"
+# 2. Clique em "Create Bucket"
+# 3. Nome do bucket: local (ou o nome definido em AWS_BUCKET)
+# 4. Em "Access Policy", selecione "public"
+# 5. Clique em "Create Bucket"
+
+# Configurando a Política de Acesso do Bucket:
+# 1. Vá para o bucket criado
+# 2. Clique em "Access Policy"
+# 3. Selecione "Add Policy"
+# 4. Escolha "Read Only"
+# 5. Em "Principal" coloque "*" (sem aspas)
+# 6. Em "Prefix" deixe vazio para acesso a todo bucket
+# 7. Clique em "Add"
+```
+
+7. Instale as dependências do frontend:
 ```bash
 docker-compose exec app npm install
 docker-compose exec app npm run dev
