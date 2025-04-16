@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Rules\AllowedHtmlTags;
+use App\Rules\ImageOrUrl;
+use App\Rules\PriceGreaterThanCost;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
@@ -32,10 +34,10 @@ class ProductRequest extends FormRequest
                 'max:255',
                 new AllowedHtmlTags
             ],
-            'price' => 'required|numeric|min:0',
+            'price' => ['required', 'numeric', 'min:0', new PriceGreaterThanCost],
             'cost' => 'required|numeric|min:0',
             'status' => 'sometimes|boolean',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'image' => ['sometimes', new ImageOrUrl]
         ];
     }
 
@@ -46,9 +48,6 @@ class ProductRequest extends FormRequest
             'description.required' => 'A descrição é obrigatória',
             'price.required' => 'O preço é obrigatório',
             'cost.required' => 'O custo é obrigatório',
-            'image.image' => 'O arquivo deve ser uma imagem',
-            'image.mimes' => 'Apenas imagens JPG e PNG são permitidas',
-            'image.max' => 'A imagem não pode ser maior que 2MB'
         ];
     }
 }
