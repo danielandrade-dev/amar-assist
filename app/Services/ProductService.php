@@ -33,16 +33,7 @@ class ProductService
     {
         $this->productRepository->delete($product);
     }
-
-    public function find(int $id): Product
-    {
-        return $this->productRepository->find($id);
-    }
     
-    public function findBySlug(string $slug): Product
-    {
-        return $this->productRepository->findBySlug($slug);
-    }
 
     public function changeStatus(Product $product): void
     {

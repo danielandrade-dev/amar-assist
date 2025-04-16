@@ -25,28 +25,12 @@ final class ProductRepository implements ProductRepositoryInterface
 
     public function update(array $data, Product $product): Product
     {
-        $product->update($data);
-        return $product;
+        return $product->update($data);
     }   
 
     public function delete(Product $product): void
     {
         $product->delete();
-    }   
-
-    public function find(int $id): Product
-    {
-        return Product::query()
-        ->with('activeStorage')
-        ->find($id);
-    }   
-    
-    public function findBySlug(string $slug): Product
-    {
-        return Product::query()
-        ->with('activeStorage')
-        ->where('slug', $slug)
-        ->first();
     }   
 
     public function changeStatus(Product $product): void

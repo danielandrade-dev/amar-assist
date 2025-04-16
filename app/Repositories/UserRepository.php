@@ -18,22 +18,14 @@ final class UserRepository implements UserRepositoryInterface
         return User::create($data);
     }
 
-    public function update(array $data, int $id): int
+    public function update(array $data, User $user): User
     {
-        $user = User::findOrFail($id);
-
         return $user->update($data);
     }
 
-    public function delete(int $id): bool
+    public function delete(User $user): void
     {
-        $user = User::findOrFail($id);
-
-        return $user->delete();
+        $user->delete();
     }
 
-    public function find(int $id): ?User
-    {
-        return User::find($id);
-    }
 }

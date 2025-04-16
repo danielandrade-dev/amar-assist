@@ -99,9 +99,9 @@ final class UserController extends Controller
         }
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(User $user): RedirectResponse
     {
-        $result = $this->userService->delete($id);
+        $result = $this->userService->delete($user->id);
 
         if (!is_bool($result)) {
             throw new \UnexpectedValueException('Failed deleting user');

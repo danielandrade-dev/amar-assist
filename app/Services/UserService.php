@@ -24,18 +24,13 @@ class UserService
         return $this->userRepository->update($data, $id);
     }
 
-    public function delete(int $id): void
+    public function delete(User $user): void
     {
-        $this->userRepository->delete($id);
+        $this->userRepository->delete($user);
     }
 
     public function all(): Collection
     {
         return $this->userRepository->all();
-    }
-
-    public function find(int $id): ?User
-    {
-        return $this->userRepository->find($id);
     }
 }
