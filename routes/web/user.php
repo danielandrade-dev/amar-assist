@@ -9,7 +9,7 @@ Route::prefix('/users')->name('users.')->controller(UserController::class)->grou
     Route::get('/', 'index')->name('index');
     Route::get('/create', 'create')->name('create');
     Route::post('/', 'store')->name('store');
-    Route::get('/{user:id|email}/edit', 'edit')->name('edit');
-    Route::put('/{user:id|email}', 'update')->name('update');
-    Route::delete('/{user:id|email}', 'destroy')->name('destroy');
+    Route::get('/{user:id}/edit', 'edit')->name('edit');
+    Route::put('/{user:id}', 'update')->name('update');
+    Route::delete('/{user:id}', 'destroy')->name('destroy');
 })->middleware('throttle:60,1');

@@ -6,7 +6,6 @@
     import SearchInput from '@/Components/SearchInput.vue';
     import Tooltip from '@/Components/Tooltip.vue';
     import Paginate from '@/Components/Paginate.vue';
-    import ToastContainer from '@/Components/ToastContainer.vue';
     import { useToast } from '@/Composables/useToast';
 
 const props = defineProps({
@@ -19,7 +18,6 @@ const props = defineProps({
     },
 });
 
-console.log(props.products);
 const search = ref('');
 
 const { success: showSuccess } = useToast();
@@ -56,7 +54,6 @@ function formatDate(date) {
 <template>
     <Head title="Produtos" />
     <AuthenticatedLayout>
-        <ToastContainer />
         <template #header>
             <h2 class="font-semibold text-2xl text-primary leading-tight mb-6">Produtos</h2>
         </template>

@@ -6,8 +6,9 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
-
+import ToastContainer from '@/Components/ToastContainer.vue';
 const showingNavigationDropdown = ref(false);
+
 </script>
 
 <template>
@@ -31,6 +32,9 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('products.index')" :active="route().current('products.index')">
                                     Produtos
+                                </NavLink>
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Usuários
                                 </NavLink>
                             </div>
                         </div>
@@ -112,8 +116,11 @@ const showingNavigationDropdown = ref(false);
                     class="sm:hidden"
                 >
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
+                        <ResponsiveNavLink :href="route('products.index')" :active="route().current('products.index')">
+                            Produtos
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('users.index')" :active="route().current('users.index')">
+                            Usuários
                         </ResponsiveNavLink>
                     </div>
 
@@ -148,5 +155,6 @@ const showingNavigationDropdown = ref(false);
                 <slot />
             </main>
         </div>
+        <ToastContainer />
     </div>
 </template>

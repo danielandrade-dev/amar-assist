@@ -25,18 +25,12 @@ class ProductRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => ['required', 'string', 'max:255', 'regex:/^[^<>]*(<\/?(?:p|br|b|strong)>)[^<>]*$/i'],
-            'price' => ['required', 'numeric', 'min:0', function($attribute, $value, $fail) {
-                $cost = request()->input('cost');
-                $minPrice = $cost * 1.10;
-                if ($value < $minPrice) {
-                    $fail('O preço deve ser pelo menos 10% maior que o custo.');
-                }
-            }],
-            'stock' => 'required|integer|min:0',
+            'description' => ['required', 'string', 'max:255', 'regex:/^(?:<p>.*?<\/p>|\s*<br\s*\/?>|\s*<b>.*?<\/b>|\s*<strong>.*?<\/strong>|\s*[^<>])$/i'],
+            'price' => 'required|numeric|min:0',
             'cost' => 'required|numeric|min:0',
-            'status' => 'required|boolean',
-            'images.*' => 'image|mimes:jpg,png'
+            'status' => 'sometimes|boolean',
+            'images' => 'array',
+            'images.*' => 'image|mimes:jpg,png',
         ];
     }
 
@@ -47,9 +41,7 @@ class ProductRequest extends FormRequest
             'description.required' => 'A descrição é obrigatória',
             'description.regex' => 'A descrição só pode conter as tags HTML: p, br, b e strong',
             'price.required' => 'O preço é obrigatório',
-            'stock.required' => 'O estoque é obrigatório',
             'cost.required' => 'O custo é obrigatório',
-            'status.required' => 'O status é obrigatório',
             'images.*.image' => 'O arquivo deve ser uma imagem',
             'images.*.mimes' => 'Apenas imagens JPG e PNG são permitidas'
         ];

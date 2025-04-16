@@ -7,6 +7,7 @@ import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputFile from '@/Components/InputFile.vue';
 import InputText from '@/Components/InputLongText.vue';
+import { useToast } from '@/Composables/useToast';
 
 const props = defineProps({
     product: {
@@ -24,11 +25,15 @@ const form = useForm({
 });
 
 const isSubmitting = ref(false);
+const { success: showSuccess } = useToast();
 
 function updateProduct() {
     isSubmitting.value = true;
-    form.put(route('products.update', props.product.id), {
+    form.put(route('products.update', props.product.slug), {
         onFinish: () => isSubmitting.value = false,
+        onSuccess: () => {
+            showSuccess('Produto atualizado com sucesso!');
+        }
     });
 }
 

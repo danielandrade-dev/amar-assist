@@ -9,9 +9,8 @@ Route::prefix ('/products')->name('products.')->controller(ProductController::cl
     Route::get('/', 'index')->name('index');
     Route::get('/create', 'create')->name('create');
     Route::post('/', 'store')->name('store');
-    Route::get('/{slug}/edit', 'edit')->name('edit');
-    Route::put('/{slug}', 'update')->name('update');
+    Route::get('/{product:slug}/edit', 'edit')->name('edit');
+    Route::put('/{product:slug}', 'update')->name('update');
     Route::delete('/{product:slug}', 'destroy')->name('destroy');
-    Route::get('/{slug}', 'show')->name('show');
     Route::put('/{product:slug}/status', 'changeStatus')->name('changeStatus');
 })->middleware('throttle:60,1');

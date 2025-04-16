@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
-
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 final class UserController extends Controller
 {
@@ -22,14 +24,23 @@ final class UserController extends Controller
 
     public function index(): Response
     {
-        $users = $this->userService->all();
-
-        return Inertia::render('users/index', compact('users'));
+        return Inertia::render('User/Index', [
+            'users' => User::query()
+                ->when(request('search'), function($query, $search) {
+                    $query->where(function($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+                })
+                ->latest()
+                ->paginate(10)
+                ->withQueryString()
+        ]);
     }
 
     public function create(): Response
     {
-        return Inertia::render('users/create');
+        return Inertia::render('User/Create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,42 +57,46 @@ final class UserController extends Controller
             throw new \UnexpectedValueException('Failed to create user');
         }
 
-        return redirect()->route('users.show', $user->id);
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Usuário criado com sucesso');
     }
 
-    public function show(int $id): Response
+    public function edit(User $user): Response
     {
-        $user = $this->userService->find($id);
-
         if (!$user instanceof User) {
             throw new ModelNotFoundException('User not found');
         }
 
-        return Inertia::render('users/show', compact('user'));
+        return Inertia::render('User/Edit', compact('user'));
     }
 
-    public function edit(int $id): Response
+    public function update(ProfileUpdateRequest $request, User $user): RedirectResponse
     {
-        $user = $this->userService->find($id);
-
-        return Inertia::render('users/edit', compact('user'));
-    }
-
-    public function update(Request $request, int $id): RedirectResponse
-    {
-        $data = $request->validate([
-            'name' => 'required',
-            'email' => 'required|unique:users,email,'.$id,
-            'password' => 'sometimes|confirmed'
-        ]);
-
-        $user = $this->userService->update($data, $id);
-
-        if ($user <= 0) {
-            throw new \UnexpectedValueException('Failed to update user');
+        try {
+            $validatedData = $request->validated();
+            
+            $user->fill($validatedData);
+            
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
+            
+            if (isset($validatedData['password'])) {
+                $user->password = Hash::make($validatedData['password']);
+            }
+            
+            $user->save();
+            
+            return redirect()
+                ->route('users.index')
+                ->with('success', 'Usuário atualizado com sucesso');
+                
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['error' => 'Erro ao atualizar usuário']);
         }
-
-        return redirect()->route('users.show', $id);
     }
 
     public function destroy(int $id): RedirectResponse
@@ -92,6 +107,8 @@ final class UserController extends Controller
             throw new \UnexpectedValueException('Failed deleting user');
         }
 
-        return redirect()->route('users.index');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'Usuário deletado com sucesso');
     }
 }
